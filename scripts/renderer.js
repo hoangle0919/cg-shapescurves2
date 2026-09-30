@@ -49,17 +49,23 @@ class Renderer {
 
     // framebuffer:  canvas ctx image data
     drawSlide0(framebuffer) {
+        // TODO: draw at least 2 Bezier curves
+        //   - variable `this.num_curve_sections` should be used for `num_edges`
+        //   - variable `this.show_points` should be used to determine whether or not to render vertices
+
         let red = [220, 40, 40, 255];
         let blue = [40, 90, 220, 255];
 
         this.drawBezierCurve({x: 100, y: 150}, {x: 220, y: 450},
-                             {x: 420, y:  50}, {x: 560, y: 380},
+                             {x: 420, y: 50}, {x: 660, y: 380},
                              this.num_curve_sections, red, framebuffer);
 
         this.drawBezierCurve({x: 180, y:  80}, {x: 330, y: 420},
                              {x: 520, y: 420}, {x: 700, y: 120},
                              this.num_curve_sections, blue, framebuffer);
     }
+
+
 
     // framebuffer:  canvas ctx image data
     drawSlide1(framebuffer) {
@@ -103,6 +109,41 @@ class Renderer {
     drawSlide3(framebuffer) {
         let ink = [30, 30, 40, 255];
         let accent = [200, 60, 60, 255];
+        let grass = [45, 95, 60, 255];
+        let rock_near = [95, 105, 125, 255];
+        let rock_far = [75, 85, 105, 255];
+        let sun_color = [250, 190, 60, 255];
+
+        this.drawConvexPolygon([{x: 0, y: 0}, {x: 800, y: 0}, {x: 800, y: 70}, {x: 0, y: 70}], grass, framebuffer);
+        this.drawConvexPolygon([{x: 40, y: 70}, {x: 200, y: 185}, {x: 360, y: 70}], rock_near, framebuffer);
+        this.drawConvexPolygon([{x: 300, y: 70}, {x: 470, y: 175}, {x: 640, y: 70}], rock_far, framebuffer);
+        this.drawConvexPolygon([{x: 600, y: 70}, {x: 700, y: 150}, {x: 790, y: 70}], rock_near, framebuffer);
+
+        let sun = {x: 700, y: 500};
+        this.drawCircle(sun, 55, this.num_curve_sections, sun_color, framebuffer);
+        for (let i = 0; i < 8; i++) {
+            let a = i * Math.PI / 4;
+            let ray0 = {x: Math.round(sun.x + 65 * Math.cos(a)), y: Math.round(sun.y + 65 * Math.sin(a))};
+            let ray1 = {x: Math.round(sun.x + 85 * Math.cos(a)), y: Math.round(sun.y + 85 * Math.sin(a))};
+            this.drawLine(ray0, ray1, sun_color, framebuffer);
+            if (this.show_points) {
+                this.drawVertex(ray0, [0, 0, 0, 255], framebuffer);
+                this.drawVertex(ray1, [0, 0, 0, 255], framebuffer);
+            }
+        }
+
+        this.drawBezierCurve({x: 110, y: 520}, {x: 125, y: 545},
+                             {x: 145, y: 545}, {x: 160, y: 520},
+                             this.num_curve_sections, ink, framebuffer);
+        this.drawBezierCurve({x: 160, y: 520}, {x: 175, y: 545},
+                             {x: 195, y: 545}, {x: 210, y: 520},
+                             this.num_curve_sections, ink, framebuffer);
+        this.drawBezierCurve({x: 270, y: 555}, {x: 282, y: 572},
+                             {x: 298, y: 572}, {x: 310, y: 555},
+                             this.num_curve_sections, ink, framebuffer);
+        this.drawBezierCurve({x: 310, y: 555}, {x: 322, y: 572},
+                             {x: 338, y: 572}, {x: 350, y: 555},
+                             this.num_curve_sections, ink, framebuffer);
 
         this.drawConvexPolygon([{x: 115, y: 200}, {x: 140, y: 200}, {x: 140, y: 400}, {x: 115, y: 400}], ink, framebuffer);
         this.drawConvexPolygon([{x: 180, y: 200}, {x: 205, y: 200}, {x: 205, y: 400}, {x: 180, y: 400}], ink, framebuffer);
